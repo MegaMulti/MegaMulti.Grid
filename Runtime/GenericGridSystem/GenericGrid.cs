@@ -6,10 +6,10 @@ namespace MegaMulti.GenericGridSystem
 {
 	public class GenericGrid<T>
 	{
-		private readonly int maxWidth;
-		private readonly int maxHeight;
-		private readonly Vector2 cellSize;
-		private readonly Vector3 offset;
+		public readonly int MaxWidth;
+		public readonly int MaxHeight;
+		public readonly Vector2 CellSize;
+		public readonly Vector3 Offset;
 
 		private readonly Dictionary<Vector2Int, T> cells;
 		private readonly Dictionary<T, Vector2Int> reverseCells;
@@ -22,10 +22,10 @@ namespace MegaMulti.GenericGridSystem
 			if (cellSize.x <= 0 || cellSize.y <= 0)
 				throw new ArgumentException("MegaMulti.Grid: cellSize must be positive");
 			
-			this.maxWidth = maxWidth;
-			this.maxHeight = maxHeight;
-			this.cellSize = cellSize;
-			this.offset = offset;
+			MaxWidth = maxWidth;
+			MaxHeight = maxHeight;
+			CellSize = cellSize;
+			Offset = offset;
 
 			cells = new Dictionary<Vector2Int, T>();
 			reverseCells = new Dictionary<T, Vector2Int>();
@@ -58,7 +58,7 @@ namespace MegaMulti.GenericGridSystem
 				return false;
 			}
 
-			worldPosition = CalculateWorldPosition(x, y, cellSize, offset);
+			worldPosition = CalculateWorldPosition(x, y, CellSize, Offset);
 			return true;
 		}
 
@@ -73,7 +73,7 @@ namespace MegaMulti.GenericGridSystem
 				return false;
 			}
 
-			gridPosition = CalculateGridPosition(worldPosition, cellSize, offset);
+			gridPosition = CalculateGridPosition(worldPosition, CellSize, Offset);
 			return true;
 		}
 
@@ -104,7 +104,7 @@ namespace MegaMulti.GenericGridSystem
 		}
 		
 		public bool TrySet(Vector3 worldPosition, T value) =>
-			TrySet(CalculateGridPosition(worldPosition, cellSize, offset), value);
+			TrySet(CalculateGridPosition(worldPosition, CellSize, Offset), value);
 
 		public bool TrySet(Vector2Int gridPosition, T value) =>
 			TrySet(gridPosition.x, gridPosition.y, value);
@@ -121,7 +121,7 @@ namespace MegaMulti.GenericGridSystem
 		}
 		
 		public bool TryGet(Vector3 worldPosition, out T value) =>
-			TryGet(CalculateGridPosition(worldPosition, cellSize, offset), out value);
+			TryGet(CalculateGridPosition(worldPosition, CellSize, Offset), out value);
 
 		public bool TryGet(Vector2Int gridPosition, out T value) =>
 			TryGet(gridPosition.x, gridPosition.y, out value);
@@ -142,7 +142,7 @@ namespace MegaMulti.GenericGridSystem
 		}
 
 		public bool TryRemove(Vector3 worldPosition) =>
-			TryRemove(CalculateGridPosition(worldPosition, cellSize, offset));
+			TryRemove(CalculateGridPosition(worldPosition, CellSize, Offset));
 
 		public bool TryRemove(Vector2Int gridPosition) =>
 			TryRemove(gridPosition.x, gridPosition.y);
@@ -167,7 +167,7 @@ namespace MegaMulti.GenericGridSystem
 		}
 		
 		public bool Contains(Vector3 worldPosition) =>
-			Contains(CalculateGridPosition(worldPosition, cellSize, offset));
+			Contains(CalculateGridPosition(worldPosition, CellSize, Offset));
 
 		public bool Contains(Vector2Int gridPosition) =>
 			Contains(gridPosition.x, gridPosition.y);
@@ -182,8 +182,8 @@ namespace MegaMulti.GenericGridSystem
 
 		public bool IsPositionValid(int x, int y)
 		{
-			bool validX = maxWidth <= 0 || (x >= 0 && x < maxWidth);
-			bool validY = maxHeight <= 0 || (y >= 0 && y < maxHeight);
+			bool validX = MaxWidth <= 0 || (x >= 0 && x < MaxWidth);
+			bool validY = MaxHeight <= 0 || (y >= 0 && y < MaxHeight);
 
 			return validX && validY;
 		}
@@ -192,7 +192,7 @@ namespace MegaMulti.GenericGridSystem
 			IsPositionValid(gridPosition.x, gridPosition.y);
 
 		public bool IsPositionValid(Vector3 worldPosition) =>
-			IsPositionValid(CalculateGridPosition(worldPosition, cellSize, offset));
+			IsPositionValid(CalculateGridPosition(worldPosition, CellSize, Offset));
 
 		#endregion
 
@@ -233,15 +233,15 @@ namespace MegaMulti.GenericGridSystem
 
 		public bool TryMove(Vector3 fromWorldPosition, Vector3 toWorldPosition) =>
 			TryMove(
-				CalculateGridPosition(fromWorldPosition, cellSize, offset),
-				CalculateGridPosition(toWorldPosition, cellSize, offset)
+				CalculateGridPosition(fromWorldPosition, CellSize, Offset),
+				CalculateGridPosition(toWorldPosition, CellSize, Offset)
 			);
 
 		public bool TryMove(Vector3 fromWorldPosition, Vector2Int toGridPosition) =>
-			TryMove(CalculateGridPosition(fromWorldPosition, cellSize, offset), toGridPosition);
+			TryMove(CalculateGridPosition(fromWorldPosition, CellSize, Offset), toGridPosition);
 
 		public bool TryMove(Vector2Int fromGridPosition, Vector3 toWorldPosition) =>
-			TryMove(fromGridPosition, CalculateGridPosition(toWorldPosition, cellSize, offset));
+			TryMove(fromGridPosition, CalculateGridPosition(toWorldPosition, CellSize, Offset));
 
 		public bool TryMoveDirection(int fromX, int fromY, int directionX, int directionY) =>
 			TryMove(fromX, fromY, fromX + directionX, fromY + directionY);
@@ -253,10 +253,10 @@ namespace MegaMulti.GenericGridSystem
 			TryMoveDirection(fromGridPosition.x, fromGridPosition.y, direction.x, direction.y);
 
 		public bool TryMoveDirection(Vector3 fromWorldPosition, int directionX, int directionY) =>
-			TryMoveDirection(CalculateGridPosition(fromWorldPosition, cellSize, offset), new Vector2Int(directionX, directionY));
+			TryMoveDirection(CalculateGridPosition(fromWorldPosition, CellSize, Offset), new Vector2Int(directionX, directionY));
 
 		public bool TryMoveDirection(Vector3 fromWorldPosition, Vector2Int direction) =>
-			TryMoveDirection(CalculateGridPosition(fromWorldPosition, cellSize, offset), direction);
+			TryMoveDirection(CalculateGridPosition(fromWorldPosition, CellSize, Offset), direction);
 
 		public bool TryMoveUp(int fromX, int fromY) =>
 			TryMoveDirection(fromX, fromY, 0, 1);
@@ -265,7 +265,7 @@ namespace MegaMulti.GenericGridSystem
 			TryMoveUp(fromGridPosition.x, fromGridPosition.y);
 
 		public bool TryMoveUp(Vector3 fromWorldPosition) =>
-			TryMoveUp(CalculateGridPosition(fromWorldPosition, cellSize, offset));
+			TryMoveUp(CalculateGridPosition(fromWorldPosition, CellSize, Offset));
 
 		public bool TryMoveDown(int fromX, int fromY) =>
 			TryMoveDirection(fromX, fromY, 0, -1);
@@ -274,7 +274,7 @@ namespace MegaMulti.GenericGridSystem
 			TryMoveDown(fromGridPosition.x, fromGridPosition.y);
 
 		public bool TryMoveDown(Vector3 fromWorldPosition) =>
-			TryMoveDown(CalculateGridPosition(fromWorldPosition, cellSize, offset));
+			TryMoveDown(CalculateGridPosition(fromWorldPosition, CellSize, Offset));
 
 		public bool TryMoveRight(int fromX, int fromY) =>
 			TryMoveDirection(fromX, fromY, 1, 0);
@@ -283,7 +283,7 @@ namespace MegaMulti.GenericGridSystem
 			TryMoveRight(fromGridPosition.x, fromGridPosition.y);
 
 		public bool TryMoveRight(Vector3 fromWorldPosition) =>
-			TryMoveRight(CalculateGridPosition(fromWorldPosition, cellSize, offset));
+			TryMoveRight(CalculateGridPosition(fromWorldPosition, CellSize, Offset));
 
 		public bool TryMoveLeft(int fromX, int fromY) =>
 			TryMoveDirection(fromX, fromY, -1, 0);
@@ -292,7 +292,7 @@ namespace MegaMulti.GenericGridSystem
 			TryMoveLeft(fromGridPosition.x, fromGridPosition.y);
 
 		public bool TryMoveLeft(Vector3 fromWorldPosition) =>
-			TryMoveLeft(CalculateGridPosition(fromWorldPosition, cellSize, offset));
+			TryMoveLeft(CalculateGridPosition(fromWorldPosition, CellSize, Offset));
 
 		#endregion
 
