@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MegaMulti.Grid
+namespace MegaMulti.BasicGenericGridSystem
 {
-	public class Grid<T>
+	public class GenGrid<T>
 	{
 		private readonly int maxWidth;
 		private readonly int maxHeight;
@@ -13,7 +13,7 @@ namespace MegaMulti.Grid
 
 		private readonly Dictionary<Vector2Int, T> cells;
 
-		public Grid(int maxWidth = 0, int maxHeight = 0, Vector2 cellSize = default, Vector3 offset = default)
+		public GenGrid(int maxWidth = 0, int maxHeight = 0, Vector2 cellSize = default, Vector3 offset = default)
 		{
 			if (cellSize == Vector2.zero)
 				cellSize = Vector2.one;
