@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -61,7 +62,10 @@ namespace MegaMulti.GenericGridSystem
 
 		public Vector2Int GetGridPosition(T value)
 		{
-			return reverseCells.TryGetValue(value, out var gridPosition) ? gridPosition : default;
+			if (!reverseCells.TryGetValue(value, out var gridPosition))
+				throw new InvalidOperationException($"Value '{value}' is not present on the grid.");
+
+			return gridPosition;
 		}
 
 		public Vector3 GetWorldPosition(T value)
@@ -93,6 +97,9 @@ namespace MegaMulti.GenericGridSystem
 
 		public void Set(int x, int y, T value)
 		{
+			if (!IsPositionValid(x, y))
+				throw new ArgumentOutOfRangeException($"Position ({x}, {y}) is out of grid bounds ({MaxWidth}, {MaxHeight}).");
+
 			var pos = new Vector2Int(x, y);
 
 			if (cells.TryGetValue(pos, out var oldValue))
@@ -117,6 +124,9 @@ namespace MegaMulti.GenericGridSystem
 
 		public T Get(int x, int y)
 		{
+			if (!IsPositionValid(x, y))
+				throw new ArgumentOutOfRangeException($"Position ({x}, {y}) is out of grid bounds ({MaxWidth}, {MaxHeight}).");
+
 			cells.TryGetValue(new Vector2Int(x, y), out var value);
 			return value;
 		}
@@ -133,6 +143,9 @@ namespace MegaMulti.GenericGridSystem
 
 		public void Remove(int x, int y)
 		{
+			if (!IsPositionValid(x, y))
+				throw new ArgumentOutOfRangeException($"Position ({x}, {y}) is out of grid bounds ({MaxWidth}, {MaxHeight}).");
+
 			var pos = new Vector2Int(x, y);
 			if (cells.Remove(pos, out var value))
 				reverseCells.Remove(value);
@@ -150,6 +163,9 @@ namespace MegaMulti.GenericGridSystem
 
 		public void Remove(T value)
 		{
+			if (!reverseCells.ContainsKey(value))
+				throw new InvalidOperationException($"Value '{value}' is not present on the grid.");
+
 			Remove(GetGridPosition(value));
 		}
 
@@ -179,6 +195,12 @@ namespace MegaMulti.GenericGridSystem
 
 		public void Move(int fromX, int fromY, int toX, int toY)
 		{
+			if (!IsPositionValid(fromX, fromY))
+				throw new ArgumentOutOfRangeException($"From position ({fromX}, {fromY}) is out of grid bounds ({MaxWidth}, {MaxHeight}).");
+
+			if (!IsPositionValid(toX, toY))
+				throw new ArgumentOutOfRangeException($"To position ({toX}, {toY}) is out of grid bounds ({MaxWidth}, {MaxHeight}).");
+
 			var from = new Vector2Int(fromX, fromY);
 			var to = new Vector2Int(toX, toY);
 
